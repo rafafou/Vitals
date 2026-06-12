@@ -89,6 +89,8 @@
   .pcard.p2 .dl a{background:#d1fae5;color:#065f46}
   .pcard.p3 .dl a{background:#ffe4e6;color:#9d174d}
   .pcard .dl a:hover{filter:brightness(.97)}
+  .pcard .dl a.doc{background:transparent !important;border:1px solid var(--line);color:var(--muted) !important;margin-top:8px;font-weight:600}
+  .pcard .dl a.doc:hover{border-color:var(--indigo);color:var(--indigo) !important;filter:none}
 
   /* PROBLEM STRIP */
   .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -211,7 +213,10 @@
             <li data-en="Live security score that rises as you fix" data-fr="Score de sécurité en direct qui monte quand tu corriges">Live security score that rises as you fix</li>
             <li data-en="One-click fix inserts the missing check (Ctrl+Z to undo)" data-fr="Quick-fix qui insère la vérification manquante (Ctrl+Z pour annuler)">One-click fix inserts the missing check (Ctrl+Z to undo)</li>
           </ul>
-          <div class="dl"><a href="RemoteSecurityAuditor.luau" download>⬇ RemoteSecurityAuditor.luau</a></div>
+          <div class="dl">
+            <a href="RemoteSecurityAuditor.luau" download>⬇ RemoteSecurityAuditor.luau</a>
+            <a class="doc" href="https://github.com/rafafou/Vitals/blob/main/README_Security.md" target="_blank" rel="noopener">📖 Documentation</a>
+          </div>
         </div>
       </div>
 
@@ -229,7 +234,10 @@
             <li data-en="Live: graphs memory per category during playtest" data-fr="Live : trace la mémoire par catégorie pendant le playtest">Live: graphs memory per category during playtest</li>
             <li data-en="Flags categories that only keep rising — your leak" data-fr="Signale les catégories qui ne font que monter — ta fuite">Flags categories that only keep rising — your leak</li>
           </ul>
-          <div class="dl"><a href="MemoryLeakTracker.luau" download>⬇ MemoryLeakTracker.luau</a></div>
+          <div class="dl">
+            <a href="MemoryLeakTracker.luau" download>⬇ MemoryLeakTracker.luau</a>
+            <a class="doc" href="https://github.com/rafafou/Vitals/blob/main/README_LeakTracker.md" target="_blank" rel="noopener">📖 Documentation</a>
+          </div>
         </div>
       </div>
 
@@ -247,7 +255,10 @@
             <li data-en="Ghost parts, loose physics parts, streaming advice" data-fr="Parts fantômes, parts physiques inutiles, conseils streaming">Ghost parts, loose physics parts, streaming advice</li>
             <li data-en="Click an alert to select the objects in Explorer" data-fr="Clique une alerte pour sélectionner les objets dans l'Explorer">Click an alert to select the objects in Explorer</li>
           </ul>
-          <div class="dl"><a href="PlaceOptimizer.luau" download>⬇ PlaceOptimizer.luau</a></div>
+          <div class="dl">
+            <a href="PlaceOptimizer.luau" download>⬇ PlaceOptimizer.luau</a>
+            <a class="doc" href="https://github.com/rafafou/Vitals/blob/main/README_PlaceOptimizer.md" target="_blank" rel="noopener">📖 Documentation</a>
+          </div>
         </div>
       </div>
 
