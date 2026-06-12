@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vitals — Health checks for your Roblox game</title>
+<meta name="description" content="Vitals is three plugins for Roblox Studio to ship a game that's safe, stable and light: Security, Memory, and Performance.">
+<link rel="icon" type="image/svg+xml" href="vitals-logo.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#6d28d9; --blue:#2563eb; --pink:#db2777;
+    --green:#22c55e; --teal:#14b8a6; --orange:#f97316;
+    --ink:#13132b; --muted:#5b5b7a; --line:#ececf6;
+    --bg:#ffffff; --bg2:#f6f5ff;
+    --shadow:0 18px 50px -12px rgba(60,40,160,.28);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.brand{font-family:'Fredoka',sans-serif;letter-spacing:-.01em}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 22px}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;gap:14px;height:64px}
+  .brand{font-size:1.18rem;font-weight:700;display:flex;align-items:center;gap:9px}
+  .brand .badge{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--indigo),var(--blue));font-size:1rem}
+  .nav-links{margin-left:auto;display:flex;align-items:center;gap:22px}
+  .nav-links a{font-weight:600;font-size:.92rem;color:var(--muted)}
+  .nav-links a:hover{color:var(--ink)}
+  .lang{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;overflow:hidden;font-weight:700;font-size:.8rem}
+  .lang button{border:0;background:transparent;padding:6px 12px;cursor:pointer;color:var(--muted);font-family:inherit}
+  .lang button.on{background:linear-gradient(135deg,var(--indigo),var(--blue));color:#fff}
+  @media(max-width:760px){.nav-links a.hide-sm{display:none}}
+
+  /* HERO */
+  .hero{position:relative;overflow:hidden;color:#fff;padding:74px 0 86px;background:
+    radial-gradient(1100px 480px at 16% -10%,rgba(219,39,119,.32),transparent 60%),
+    radial-gradient(900px 520px at 92% 0%,rgba(20,184,166,.32),transparent 60%),
+    linear-gradient(160deg,#5b21b6 0%,#4338ca 44%,#1e3a8a 100%)}
+  .hero:after{content:"";position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.10) 1px,transparent 1px);background-size:22px 22px;opacity:.5}
+  .hero-in{position:relative;z-index:2;text-align:center}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);padding:7px 15px;border-radius:999px;font-weight:600;font-size:.82rem;margin-bottom:20px}
+  .hero h1{font-size:3.2rem;line-height:1.05;font-weight:700;margin-bottom:16px}
+  @media(max-width:760px){.hero h1{font-size:2.3rem}}
+  .hero h1 .hl{background:linear-gradient(90deg,#fde047,#fb7185);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lead{font-size:1.18rem;color:#e8e5ff;max-width:620px;margin:0 auto 14px}
+  .triwords{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:22px 0 30px;font-family:'Fredoka';font-weight:600}
+  .triwords span{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);padding:8px 16px;border-radius:12px;font-size:1rem}
+  .cta{display:flex;flex-wrap:wrap;gap:13px;justify-content:center}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:14px 22px;border-radius:14px;font-weight:700;font-size:.98rem;cursor:pointer;border:0;transition:transform .12s,box-shadow .12s;font-family:inherit}
+  .btn:hover{transform:translateY(-2px)}
+  .btn-green{background:linear-gradient(135deg,#34d399,#16a34a);color:#062a16;box-shadow:0 12px 26px -8px rgba(22,163,74,.7)}
+  .btn-blue{background:linear-gradient(135deg,#60a5fa,#2563eb);color:#fff;box-shadow:0 12px 26px -8px rgba(37,99,235,.7)}
+  .btn-ghost{background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.4);color:#fff}
+  .hero-note{margin-top:16px;font-size:.84rem;color:#cbc6f6}
+
+  /* SECTION SHELL */
+  section.block{padding:74px 0}
+  .bg2{background:var(--bg2)}
+  .eyebrow{text-align:center;color:var(--indigo);font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.78rem;margin-bottom:10px}
+  h2.sec{text-align:center;font-size:2.1rem;font-weight:700;margin-bottom:12px}
+  .sub{text-align:center;color:var(--muted);max-width:640px;margin:0 auto 46px;font-size:1.05rem}
+
+  /* PLUGIN CARDS */
+  .plugins{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+  @media(max-width:920px){.plugins{grid-template-columns:1fr;max-width:520px;margin:0 auto}}
+  .pcard{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+  .pcard:hover{transform:translateY(-5px);box-shadow:var(--shadow)}
+  .pcard .top{padding:24px 22px 20px;color:#fff;position:relative}
+  .pcard.p1 .top{background:linear-gradient(135deg,#7c3aed,#4f46e5)}
+  .pcard.p2 .top{background:linear-gradient(135deg,#0d9488,#22c55e)}
+  .pcard.p3 .top{background:linear-gradient(135deg,#ea580c,#db2777)}
+  .pcard .ic{font-size:2.2rem;margin-bottom:10px;display:block}
+  .pcard .top h3{font-size:1.32rem;margin-bottom:6px}
+  .pcard .top .tl{font-size:.92rem;opacity:.95}
+  .pcard .score{position:absolute;top:18px;right:18px;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:4px 10px;font-family:'Fredoka';font-weight:700;font-size:.82rem}
+  .pcard .body{padding:20px 22px;flex:1;display:flex;flex-direction:column}
+  .pcard ul{list-style:none;margin-bottom:18px}
+  .pcard li{padding-left:24px;position:relative;color:var(--ink);font-size:.93rem;margin-bottom:9px}
+  .pcard li:before{content:"✓";position:absolute;left:0;top:0;font-weight:800;color:var(--green)}
+  .pcard .dl{margin-top:auto}
+  .pcard .dl a{display:block;text-align:center;padding:11px;border-radius:12px;font-weight:700;font-size:.92rem;font-family:inherit}
+  .pcard.p1 .dl a{background:#ede9fe;color:#5b21b6}
+  .pcard.p2 .dl a{background:#d1fae5;color:#065f46}
+  .pcard.p3 .dl a{background:#ffe4e6;color:#9d174d}
+  .pcard .dl a:hover{filter:brightness(.97)}
+
+  /* PROBLEM STRIP */
+  .strip{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:760px){.strip{grid-template-columns:1fr}}
+  .scell{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+  .scell .big{font-size:2rem;margin-bottom:8px}
+  .scell h3{font-size:1.1rem;margin-bottom:6px}
+  .scell p{color:var(--muted);font-size:.94rem}
+
+  /* STEPS */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
+  @media(max-width:760px){.steps{grid-template-columns:1fr}}
+  .step{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px 22px;position:relative}
+  .step:before{counter-increment:s;content:counter(s);position:absolute;top:-16px;left:22px;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--indigo),var(--pink));color:#fff;font-family:'Fredoka';font-weight:700;display:grid;place-items:center;font-size:1.1rem;box-shadow:var(--shadow)}
+  .step h3{margin:10px 0 7px;font-size:1.08rem}
+  .step p{color:var(--muted);font-size:.94rem}
+
+  /* DETAIL + RULES TABLE */
+  .dhead{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:10px}
+  .dhead .di{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;font-size:1.5rem;color:#fff}
+  .dhead.p1 .di{background:linear-gradient(135deg,#7c3aed,#4f46e5)}
+  .dhead.p2 .di{background:linear-gradient(135deg,#0d9488,#22c55e)}
+  .dhead.p3 .di{background:linear-gradient(135deg,#ea580c,#db2777)}
+  .dhead h2{font-size:1.8rem}
+  .rules{overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fff;max-width:900px;margin:0 auto}
+  table{width:100%;border-collapse:collapse;font-size:.93rem}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--line)}
+  th{background:var(--bg2);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+  tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;padding:3px 9px;border-radius:7px;font-weight:800;font-size:.7rem;color:#fff;white-space:nowrap}
+  .t-crit{background:#ef4444}.t-high{background:#f97316}.t-med{background:#f59e0b}.t-low{background:#2563eb}.t-info{background:#94a3b8}
+  td.code{font-family:'JetBrains Mono',monospace;font-weight:600}
+  .twocol{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:900px;margin:0 auto}
+  @media(max-width:720px){.twocol{grid-template-columns:1fr}}
+  .info-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px}
+  .info-card h3{font-size:1.05rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  .info-card p{color:var(--muted);font-size:.93rem;margin-bottom:8px}
+  .info-card .mono{font-family:'JetBrains Mono',monospace;font-size:.82rem;background:var(--bg2);padding:2px 6px;border-radius:5px}
+
+  /* CTA BAND */
+  .ctaband{background:linear-gradient(135deg,#6d28d9,#2563eb,#db2777);color:#fff;border-radius:24px;padding:50px 34px;text-align:center;box-shadow:var(--shadow)}
+  .ctaband h2{font-size:2rem;margin-bottom:10px}
+  .ctaband p{color:#e8e6ff;max-width:540px;margin:0 auto 26px}
+
+  footer{padding:40px 0 56px;text-align:center;color:var(--muted);font-size:.9rem}
+  footer .brand{justify-content:center;color:var(--ink);margin-bottom:10px}
+  .disclaimer{max-width:700px;margin:18px auto 0;font-size:.8rem;color:#9a9ab2}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-in">
+    <div class="brand"><img src="vitals-logo.svg" alt="Vitals" width="30" height="30" style="border-radius:8px"> Vitals</div>
+    <div class="nav-links">
+      <a class="hide-sm" href="#plugins" data-en="Plugins" data-fr="Plugins">Plugins</a>
+      <a class="hide-sm" href="#install" data-en="Install" data-fr="Installer">Install</a>
+      <div class="lang">
+        <button id="en" class="on" onclick="setLang('en')">EN</button>
+        <button id="fr" onclick="setLang('fr')">FR</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap hero-in">
+    <img src="vitals-logo.svg" alt="Vitals" width="78" height="78" style="border-radius:19px;margin-bottom:18px;box-shadow:0 14px 34px -8px rgba(0,0,0,.45)">
+    <span class="pill">🧰 <span data-en="3 plugins for Roblox Studio · one mission" data-fr="3 plugins pour Roblox Studio · une mission">3 plugins for Roblox Studio · one mission</span></span>
+    <h1 data-en='Ship a game that is <span class="hl">safe, stable & light.</span>' data-fr='Sors un jeu <span class="hl">sûr, stable & léger.</span>'>Ship a game that is <span class="hl">safe, stable &amp; light.</span></h1>
+    <p class="lead" data-en="Vitals is three focused tools that audit your Roblox place where it matters most — security, memory, and load time — and tell you exactly what to fix." data-fr="Vitals, c'est trois outils ciblés qui auditent ton place Roblox là où ça compte vraiment — sécurité, mémoire, temps de chargement — et te disent exactement quoi corriger.">Vitals is three focused tools that audit your Roblox place where it matters most — security, memory, and load time — and tell you exactly what to fix.</p>
+    <div class="triwords">
+      <span>🛡️ <span data-en="Safe" data-fr="Sûr">Safe</span></span>
+      <span>🩺 <span data-en="Stable" data-fr="Stable">Stable</span></span>
+      <span>⚡ <span data-en="Light" data-fr="Léger">Light</span></span>
+    </div>
+    <div class="cta">
+      <a class="btn btn-green" href="#" data-en="🛒 Get on Creator Store" data-fr="🛒 Sur le Creator Store">🛒 Get on Creator Store</a>
+      <a class="btn btn-blue" href="#" data-en="💬 DevForum thread" data-fr="💬 Sujet DevForum">💬 DevForum thread</a>
+      <a class="btn btn-ghost" href="#plugins" data-en="⬇ Download plugins" data-fr="⬇ Télécharger les plugins">⬇ Download plugins</a>
+    </div>
+    <p class="hero-note" data-en="Free · 100% static analysis + live monitoring · Never changes your code without your click" data-fr="Gratuit · Analyse statique + suivi live · Ne touche jamais ton code sans ton clic">Free · 100% static analysis + live monitoring · Never changes your code without your click</p>
+  </div>
+</header>
+
+<!-- WHY / PROBLEM -->
+<section class="block">
+  <div class="wrap">
+    <div class="eyebrow" data-en="Why" data-fr="Pourquoi">Why</div>
+    <h2 class="sec" data-en="Three things break Roblox games" data-fr="Trois choses cassent les jeux Roblox">Three things break Roblox games</h2>
+    <p class="sub" data-en="Each plugin kills one of them — and there was no good free tool for any of these." data-fr="Chaque plugin en élimine une — et il n'existait aucun bon outil gratuit pour ça.">Each plugin kills one of them — and there was no good free tool for any of these.</p>
+    <div class="strip">
+      <div class="scell"><div class="big">🕹️💸</div><h3 data-en="Exploiters" data-fr="Les exploiters">Exploiters</h3><p data-en="Hackers fire your RemoteEvents with fake values to steal currency and duplicate items." data-fr="Les hackers firent tes RemoteEvents avec de fausses valeurs pour voler de la monnaie et dupliquer des objets.">Hackers fire your RemoteEvents with fake values to steal currency and duplicate items.</p></div>
+      <div class="scell"><div class="big">📈💥</div><h3 data-en="Memory leaks" data-fr="Les fuites mémoire">Memory leaks</h3><p data-en="Un-disconnected connections and undestroyed instances grow memory until the server crashes." data-fr="Connexions non déconnectées et instances jamais détruites font monter la mémoire jusqu'au crash.">Un-disconnected connections and undestroyed instances grow memory until the server crashes.</p></div>
+      <div class="scell"><div class="big">🐌📦</div><h3 data-en="Bloat" data-fr="Le surpoids">Bloat</h3><p data-en="Dead code, heavy CSG and thousands of parts make your game slow to load and laggy." data-fr="Code mort, CSG lourd et milliers de parts rendent ton jeu lent à charger et saccadé.">Dead code, heavy CSG and thousands of parts make your game slow to load and laggy.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLUGINS -->
+<section class="block bg2" id="plugins">
+  <div class="wrap">
+    <div class="eyebrow" data-en="The suite" data-fr="La suite">The suite</div>
+    <h2 class="sec" data-en="Three plugins, one look, three scores" data-fr="Trois plugins, un même look, trois scores">Three plugins, one look, three scores</h2>
+    <p class="sub" data-en="Run all three before every release. Click any plugin to download it." data-fr="Passe les trois avant chaque sortie. Clique un plugin pour le télécharger.">Run all three before every release. Click any plugin to download it.</p>
+    <div class="plugins">
+
+      <!-- 1 -->
+      <div class="pcard p1">
+        <div class="top">
+          <span class="score" data-en="Score /100" data-fr="Score /100">Score /100</span>
+          <span class="ic">🛡️</span>
+          <h3>Vitals · Security</h3>
+          <div class="tl" data-en="Find RemoteEvent exploits before hackers do." data-fr="Trouve les failles de tes RemoteEvents avant les hackers.">Find RemoteEvent exploits before hackers do.</div>
+        </div>
+        <div class="body">
+          <ul>
+            <li data-en="9 rules: unvalidated client values, client-controlled instances, missing rate-limits…" data-fr="9 règles : valeurs client non validées, instances pilotées par le client, rate-limits manquants…">9 rules: unvalidated client values, client-controlled instances, missing rate-limits…</li>
+            <li data-en="Live security score that rises as you fix" data-fr="Score de sécurité en direct qui monte quand tu corriges">Live security score that rises as you fix</li>
+            <li data-en="One-click fix inserts the missing check (Ctrl+Z to undo)" data-fr="Quick-fix qui insère la vérification manquante (Ctrl+Z pour annuler)">One-click fix inserts the missing check (Ctrl+Z to undo)</li>
+          </ul>
+          <div class="dl"><a href="RemoteSecurityAuditor.luau" download>⬇ RemoteSecurityAuditor.luau</a></div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="pcard p2">
+        <div class="top">
+          <span class="score" data-en="Live graph" data-fr="Graphe live">Live graph</span>
+          <span class="ic">🩺</span>
+          <h3>Vitals · Memory</h3>
+          <div class="tl" data-en="Catch leaks before they crash your servers." data-fr="Attrape les fuites avant qu'elles crashent tes serveurs.">Catch leaks before they crash your servers.</div>
+        </div>
+        <div class="body">
+          <ul>
+            <li data-en="Static: flags :Connect calls that leak inside loops & handlers" data-fr="Statique : repère les :Connect qui fuient dans les boucles et handlers">Static: flags :Connect calls that leak inside loops &amp; handlers</li>
+            <li data-en="Live: graphs memory per category during playtest" data-fr="Live : trace la mémoire par catégorie pendant le playtest">Live: graphs memory per category during playtest</li>
+            <li data-en="Flags categories that only keep rising — your leak" data-fr="Signale les catégories qui ne font que monter — ta fuite">Flags categories that only keep rising — your leak</li>
+          </ul>
+          <div class="dl"><a href="MemoryLeakTracker.luau" download>⬇ MemoryLeakTracker.luau</a></div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="pcard p3">
+        <div class="top">
+          <span class="score" data-en="Score /100" data-fr="Score /100">Score /100</span>
+          <span class="ic">⚡</span>
+          <h3>Vitals · Performance</h3>
+          <div class="tl" data-en="Make your game load fast and run light." data-fr="Rends ton jeu rapide à charger et léger.">Make your game load fast and run light.</div>
+        </div>
+        <div class="body">
+          <ul>
+            <li data-en="Finds dead code, duplicate scripts, heavy CSG unions" data-fr="Trouve le code mort, les scripts dupliqués, les unions CSG lourdes">Finds dead code, duplicate scripts, heavy CSG unions</li>
+            <li data-en="Ghost parts, loose physics parts, streaming advice" data-fr="Parts fantômes, parts physiques inutiles, conseils streaming">Ghost parts, loose physics parts, streaming advice</li>
+            <li data-en="Click an alert to select the objects in Explorer" data-fr="Clique une alerte pour sélectionner les objets dans l'Explorer">Click an alert to select the objects in Explorer</li>
+          </ul>
+          <div class="dl"><a href="PlaceOptimizer.luau" download>⬇ PlaceOptimizer.luau</a></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- DETAIL 1 : SECURITY -->
+<section class="block">
+  <div class="wrap">
+    <div class="dhead p1"><span class="di">🛡️</span><h2 data-en="Vitals · Security — in detail" data-fr="Vitals · Security — en détail">Vitals · Security — in detail</h2></div>
+    <p class="sub" data-en="It scans every server handler (OnServerEvent / OnServerInvoke), scores your security /100, and can insert the missing check in one click." data-fr="Il scanne chaque handler serveur (OnServerEvent / OnServerInvoke), note ta sécurité /100, et peut insérer la vérification manquante en un clic.">It scans every server handler (OnServerEvent / OnServerInvoke), scores your security /100, and can insert the missing check in one click.</p>
+    <div class="rules">
+      <table>
+        <thead><tr><th>#</th><th data-en="Severity" data-fr="Sévérité">Severity</th><th data-en="What it catches" data-fr="Ce qu'elle détecte">What it catches</th></tr></thead>
+        <tbody>
+          <tr><td class="code">R1</td><td><span class="tag t-crit" data-en="CRITICAL" data-fr="CRITIQUE">CRITICAL</span></td><td data-en="A server handler placed inside a LocalScript — it never runs server-side." data-fr="Un handler serveur placé dans un LocalScript — il ne s'exécute jamais côté serveur.">A server handler placed inside a LocalScript — it never runs server-side.</td></tr>
+          <tr><td class="code">R2</td><td><span class="tag t-crit" data-en="CRITICAL" data-fr="CRITIQUE">CRITICAL</span></td><td data-en="An unvalidated client argument used on currency, stats, position or DataStores." data-fr="Un argument client non validé utilisé sur la monnaie, les stats, la position ou les DataStores.">An unvalidated client argument used on currency, stats, position or DataStores.</td></tr>
+          <tr><td class="code">R5</td><td><span class="tag t-high">HIGH</span></td><td data-en="The server acts on an Instance supplied by the client without checking it." data-fr="Le serveur agit sur une Instance fournie par le client sans la vérifier.">The server acts on an Instance supplied by the client without checking it.</td></tr>
+          <tr><td class="code">R3</td><td><span class="tag t-med" data-en="MEDIUM" data-fr="MOYEN">MEDIUM</span></td><td data-en="A client argument used with no type or range validation." data-fr="Un argument client utilisé sans aucune validation de type ou de plage.">A client argument used with no type or range validation.</td></tr>
+          <tr><td class="code">R4</td><td><span class="tag t-med" data-en="MEDIUM" data-fr="MOYEN">MEDIUM</span></td><td data-en="No rate-limit / debounce — the remote can be spammed." data-fr="Aucun rate-limit / debounce — le remote peut être spammé.">No rate-limit / debounce — the remote can be spammed.</td></tr>
+          <tr><td class="code">R6</td><td><span class="tag t-low" data-en="LOW" data-fr="FAIBLE">LOW</span></td><td data-en="A RemoteFunction with no clear return — can hang the caller." data-fr="Une RemoteFunction sans return clair — peut bloquer l'appelant.">A RemoteFunction with no clear return — can hang the caller.</td></tr>
+          <tr><td class="code">R7</td><td><span class="tag t-info">INFO</span></td><td data-en="A remote with no server handler — forgotten attack surface." data-fr="Un remote sans handler serveur — surface d'attaque oubliée.">A remote with no server handler — forgotten attack surface.</td></tr>
+          <tr><td class="code">R8</td><td><span class="tag t-info">INFO</span></td><td data-en="Handler wired via a named function — flagged for manual review." data-fr="Handler branché via une fonction nommée — signalé pour revue manuelle.">Handler wired via a named function — flagged for manual review.</td></tr>
+          <tr><td class="code">R9</td><td><span class="tag t-info">INFO</span></td><td data-en="An UnreliableRemoteEvent used where reliable state is expected." data-fr="Un UnreliableRemoteEvent là où on attend un état fiable.">An UnreliableRemoteEvent used where reliable state is expected.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- DETAIL 2 : LEAK -->
+<section class="block bg2">
+  <div class="wrap">
+    <div class="dhead p2"><span class="di">🩺</span><h2 data-en="Vitals · Memory — in detail" data-fr="Vitals · Memory — en détail">Vitals · Memory — in detail</h2></div>
+    <p class="sub" data-en="Two engines in two tabs: a static pass on your connection hygiene, and a live memory monitor during playtest." data-fr="Deux moteurs, deux onglets : une passe statique sur l'hygiène de tes connexions, et un suivi mémoire en direct pendant le playtest.">Two engines in two tabs: a static pass on your connection hygiene, and a live memory monitor during playtest.</p>
+    <div class="twocol">
+      <div class="info-card">
+        <h3>🔌 <span data-en="Static — Connections" data-fr="Statique — Connexions">Static — Connections</span></h3>
+        <p data-en="Flags risky patterns without running the game:" data-fr="Repère les patterns à risque sans lancer le jeu :">Flags risky patterns without running the game:</p>
+        <p><span class="mono">L1</span> <span data-en="a :Connect with discarded return created inside a loop or a high-frequency handler (Heartbeat, Touched…)." data-fr="un :Connect au retour ignoré créé dans une boucle ou un handler à haute fréquence (Heartbeat, Touched…).">a :Connect with discarded return created inside a loop or a high-frequency handler (Heartbeat, Touched…).</span></p>
+        <p><span class="mono">L4</span> <span data-en="Instance.new in a repeating scope with no :Destroy()." data-fr="Instance.new dans un scope répétable sans :Destroy().">Instance.new in a repeating scope with no :Destroy().</span></p>
+        <p><span class="mono">L6</span> <span data-en="many discarded connections and no Maid/Trove/Janitor cleanup system." data-fr="beaucoup de connexions ignorées et aucun système de nettoyage Maid/Trove/Janitor.">many discarded connections and no Maid/Trove/Janitor cleanup system.</span></p>
+      </div>
+      <div class="info-card">
+        <h3>📈 <span data-en="Live — Memory" data-fr="Live — Mémoire">Live — Memory</span></h3>
+        <p data-en="During a playtest (F5), it samples memory every second and draws a sparkline per category:" data-fr="Pendant un playtest (F5), il échantillonne la mémoire chaque seconde et trace une sparkline par catégorie :">During a playtest (F5), it samples memory every second and draws a sparkline per category:</p>
+        <p><span class="mono">Total · Instances · Signals · Lua Heap · Script</span></p>
+        <p data-en="Each gets a verdict: stable ✅, or “rising ⚠” when it only goes up — the signature of a leak. Rising Signals = piling connections; rising Instances = objects never destroyed." data-fr="Chacune reçoit un verdict : stable ✅, ou « en hausse ⚠ » quand elle ne fait que monter — la signature d'une fuite. Signals qui monte = connexions qui s'empilent ; Instances qui monte = objets jamais détruits.">Each gets a verdict: stable ✅, or “rising ⚠” when it only goes up — the signature of a leak. Rising Signals = piling connections; rising Instances = objects never destroyed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DETAIL 3 : OPTIMIZER -->
+<section class="block">
+  <div class="wrap">
+    <div class="dhead p3"><span class="di">⚡</span><h2 data-en="Vitals · Performance — in detail" data-fr="Vitals · Performance — en détail">Vitals · Performance — in detail</h2></div>
+    <p class="sub" data-en="It scans the whole place, scores its optimization /100, and tells you exactly what to lighten. Click an alert to select the objects." data-fr="Il scanne tout le place, note son optimisation /100, et te dit exactement quoi alléger. Clique une alerte pour sélectionner les objets.">It scans the whole place, scores its optimization /100, and tells you exactly what to lighten. Click an alert to select the objects.</p>
+    <div class="rules">
+      <table>
+        <thead><tr><th>#</th><th data-en="Severity" data-fr="Sévérité">Severity</th><th data-en="What it finds" data-fr="Ce qu'elle trouve">What it finds</th></tr></thead>
+        <tbody>
+          <tr><td class="code">O1</td><td><span class="tag t-med" data-en="MEDIUM" data-fr="MOYEN">MEDIUM</span></td><td data-en="ModuleScripts never required — dead code." data-fr="ModuleScripts jamais require — code mort.">ModuleScripts never required — dead code.</td></tr>
+          <tr><td class="code">O2</td><td><span class="tag t-low" data-en="LOW" data-fr="FAIBLE">LOW</span></td><td data-en="Scripts with identical code (copy-paste)." data-fr="Scripts au code identique (copier-coller).">Scripts with identical code (copy-paste).</td></tr>
+          <tr><td class="code">O3</td><td><span class="tag t-low" data-en="LOW" data-fr="FAIBLE">LOW</span></td><td data-en="Empty or disabled scripts — dead weight." data-fr="Scripts vides ou désactivés — poids mort.">Empty or disabled scripts — dead weight.</td></tr>
+          <tr><td class="code">O4</td><td><span class="tag t-med" data-en="MEDIUM" data-fr="MOYEN">MEDIUM</span></td><td data-en="UnionOperations (CSG) — heavy and slow to load." data-fr="UnionOperations (CSG) — lourdes et lentes à charger.">UnionOperations (CSG) — heavy and slow to load.</td></tr>
+          <tr><td class="code">O5</td><td><span class="tag t-info">INFO</span></td><td data-en="Ghost parts: transparent + no collision + no children." data-fr="Parts fantômes : transparentes + sans collision + sans enfant.">Ghost parts: transparent + no collision + no children.</td></tr>
+          <tr><td class="code">O6</td><td><span class="tag t-info">INFO</span></td><td data-en="Many unanchored parts — needless physics cost." data-fr="Beaucoup de parts non ancrées — coût physique inutile.">Many unanchored parts — needless physics cost.</td></tr>
+          <tr><td class="code">O7</td><td><span class="tag t-med" data-en="MEDIUM" data-fr="MOYEN">MEDIUM</span></td><td data-en="1000+ parts and StreamingEnabled off — slow load (biggest win)." data-fr="1000+ parts et StreamingEnabled désactivé — chargement lent (le plus gros gain).">1000+ parts and StreamingEnabled off — slow load (biggest win).</td></tr>
+          <tr><td class="code">O8</td><td><span class="tag t-info">INFO</span></td><td data-en="200+ decals / textures / images — graphics memory." data-fr="200+ décals / textures / images — mémoire graphique.">200+ decals / textures / images — graphics memory.</td></tr>
+          <tr><td class="code">O9</td><td><span class="tag t-low" data-en="LOW" data-fr="FAIBLE">LOW</span></td><td data-en="MeshParts with Precise collision — costly to compute." data-fr="MeshParts en collision Precise — coûteux à calculer.">MeshParts with Precise collision — costly to compute.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- INSTALL -->
+<section class="block bg2" id="install">
+  <div class="wrap">
+    <div class="eyebrow" data-en="Install" data-fr="Installer">Install</div>
+    <h2 class="sec" data-en="Same 2-minute setup for each" data-fr="La même install de 2 min pour chacun">Same 2-minute setup for each</h2>
+    <div class="steps" style="margin-top:34px">
+      <div class="step"><h3 data-en="Paste the code" data-fr="Colle le code">Paste the code</h3><p data-en="Open Studio and paste the plugin's .luau into a temporary Script." data-fr="Ouvre Studio et colle le .luau du plugin dans un Script temporaire.">Open Studio and paste the plugin's .luau into a temporary Script.</p></div>
+      <div class="step"><h3 data-en="Save as plugin" data-fr="Enregistre en plugin">Save as plugin</h3><p data-en="Right-click the script → “Save as Local Plugin”. It lands in the Plugins tab." data-fr="Clic droit → « Save as Local Plugin ». Il apparaît dans l'onglet Plugins.">Right-click the script → “Save as Local Plugin”. It lands in the Plugins tab.</p></div>
+      <div class="step"><h3 data-en="Open & scan" data-fr="Ouvre & scanne">Open &amp; scan</h3><p data-en="Click the button, allow Script Injection, and run your first scan." data-fr="Clique le bouton, autorise l'Injection de script, et lance ton premier scan.">Click the button, allow Script Injection, and run your first scan.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="block">
+  <div class="wrap">
+    <div class="ctaband">
+      <h2 data-en="Give your game a full check-up." data-fr="Offre un bilan complet à ton jeu.">Give your game a full check-up.</h2>
+      <p data-en="Safe, stable, light — three scans, three scores, one healthier game." data-fr="Sûr, stable, léger — trois scans, trois scores, un jeu en bien meilleure santé.">Safe, stable, light — three scans, three scores, one healthier game.</p>
+      <div class="cta">
+        <a class="btn btn-green" href="#" data-en="🛒 Get on Creator Store" data-fr="🛒 Sur le Creator Store">🛒 Get on Creator Store</a>
+        <a class="btn btn-blue" href="#plugins" data-en="⬇ Download the 3 plugins" data-fr="⬇ Télécharger les 3 plugins">⬇ Download the 3 plugins</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><img src="vitals-logo.svg" alt="Vitals" width="26" height="26" style="border-radius:7px"> Vitals</div>
+    <p data-en="Three plugins for Roblox Studio: Security, Memory, Performance." data-fr="Trois plugins pour Roblox Studio : Sécurité, Mémoire, Performance.">Three plugins for Roblox Studio: Security, Memory, Performance.</p>
+    <p class="disclaimer" data-en="Heuristic analysis tools — review aids, not formal guarantees. Always review suggestions before acting. Not affiliated with Roblox Corporation." data-fr="Outils d'analyse heuristique — des aides à la revue, pas des garanties formelles. Vérifie toujours les suggestions avant d'agir. Non affilié à Roblox Corporation.">Heuristic analysis tools — review aids, not formal guarantees. Always review suggestions before acting. Not affiliated with Roblox Corporation.</p>
+  </div>
+</footer>
+
+<script>
+  function setLang(lang){
+    document.documentElement.lang = lang;
+    document.getElementById('en').classList.toggle('on', lang==='en');
+    document.getElementById('fr').classList.toggle('on', lang==='fr');
+    document.querySelectorAll('[data-en]').forEach(function(el){
+      var v = el.getAttribute('data-'+lang);
+      if(v!==null) el.innerHTML = v;
+    });
+  }
+  setLang('en');
+</script>
+</body>
+</html>
